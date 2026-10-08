@@ -8,9 +8,10 @@
   "scripts": {
     "dev": "vite --host 127.0.0.1",
     "build": "vite build --base=./",
-    "test": "node --test",
+    "test": "node --test test/*.test.js",
     "desktop": "electron .",
-    "dist:win": "npm run build && electron-builder --win portable --x64"
+    "dist:win": "npm run build && electron-builder --win portable --x64",
+    "test:browser": "node test/browser.mjs"
   },
   "devDependencies": {
     "vite": "8.3.4",
