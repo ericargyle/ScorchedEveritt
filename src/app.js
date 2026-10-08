@@ -42,8 +42,10 @@ const save = () => {
 save();
 function tone(kind) {
   if (!options.sound) return;
-  audio ??= new AudioContext();
-  audio.resume();
+  const Audio = window.AudioContext || window.webkitAudioContext;
+  if (!Audio) return;
+  audio ??= new Audio();
+  audio.resume().catch(() => {});
   let notes =
     kind === "level"
       ? [392, 523, 659, 784]
@@ -68,6 +70,11 @@ function tone(kind) {
 }
 function modal(html) {
   $("dialogContent").innerHTML = html;
+  const heading = $("dialogContent").querySelector("h2");
+  if (heading) {
+    heading.id = "dialogTitle";
+    $("dialog").setAttribute("aria-labelledby", "dialogTitle");
+  }
   if (!$("dialog").open) $("dialog").showModal();
 }
 function close() {

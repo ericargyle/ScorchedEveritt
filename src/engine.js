@@ -59,8 +59,9 @@ export const tankY = (m, p) => m.land[Math.round(p.x)] - 10;
 export function move(m, dx) {
   if (m.phase !== "aim") return;
   let p = m.players[m.turn];
+  const oldX = p.x;
   p.x = Math.max(35, Math.min(965, p.x + dx));
-  if (Math.abs(p.x - m.players[1 - m.turn].x) < 55) p.x -= dx;
+  if (Math.abs(p.x - m.players[1 - m.turn].x) < 55) p.x = oldX;
 }
 export function fire(m) {
   if (m.phase !== "aim") return false;
