@@ -49,7 +49,8 @@ The Windows runner builds the actual executable. Native Windows interactive play
 
 Requires Node 22.12+ and npm.
 
-```npm ci
+```sh
+npm ci
 npm test
 npm run dev
 npm run build
