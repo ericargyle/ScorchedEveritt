@@ -1,12 +1,124 @@
-import {test} from 'node:test';import assert from 'node:assert/strict';import {defaults,terrain,createMatch,startRound,move,fire,step,impact,award,tankY} from '../src/engine.js';
-const game=()=>{let m=createMatch();startRound(m,0,10);return m;};
-test('historical option defaults',()=>assert.deepEqual(defaults,{sound:false,wind:false,rounds:5,sky:'night'}));
-test('ten deterministic varied terrain maps',()=>{assert.equal(new Set(Array.from({length:10},(_,i)=>JSON.stringify(terrain(i)))).size,10);assert.deepEqual(terrain(3),terrain(3));});
-test('movement bounded and no overlapping tanks',()=>{let m=game();move(m,-900);assert.equal(m.players[0].x,35);move(m,825);assert.equal(m.players[0].x,35);});
-test('shot has gravity, no wind by default, double fire blocked',()=>{let m=game();fire(m);let vy=m.shot.vy,vx=m.shot.vx;assert.equal(fire(m),false);step(m);assert.ok(m.shot.vy>vy);assert.equal(m.shot.vx,vx);});
-test('wind accelerates projectile',()=>{let m=createMatch(undefined,undefined,{wind:true});startRound(m,0,10);fire(m);let vx=m.shot.vx;step(m);assert.ok(m.shot.vx>vx);});
-test('hit scores points and crosses upgrade threshold',()=>{let m=game();m.players[0].misses=4;impact(m,m.players[1].x,tankY(m,m.players[1]));assert.equal(m.result.winner,0);assert.equal(m.players[0].score,1596);assert.equal(m.players[0].level,1);assert.equal(m.phase,'result');});
-test('self hit awards opponent',()=>{let m=game();impact(m,m.players[0].x,tankY(m,m.players[0]));assert.equal(m.result.winner,1);});
-test('miss transfers turn and changes terrain',()=>{let m=game(),old=m.land[500];impact(m,500,old);assert.ok(m.land[500]>old);assert.equal(m.turn,1);assert.equal(m.players[0].misses,1);assert.equal(m.phase,'handoff');});
-test('round reset preserves score and upgrades',()=>{let m=game();award(m,0);startRound(m);assert.equal(m.players[0].score,1600);assert.equal(m.players[0].level,1);assert.equal(m.round,2);assert.equal(m.turn,1);});
-test('projectiles resolve and never hang',()=>{for(let a of [5,45,90,135,175]){let m=game();m.players[0].angle=a;fire(m);for(let n=0;n<2500&&m.phase==='flight';n++)step(m);assert.notEqual(m.phase,'flight');}});
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import {
+  defaults,
+  terrain,
+  createMatch,
+  startRound,
+  move,
+  fire,
+  step,
+  impact,
+  award,
+  tankY,
+} from "../src/engine.js";
+const game = () => {
+  let m = createMatch();
+  startRound(m, 0, 10);
+  return m;
+};
+test("historical option defaults", () =>
+  assert.deepEqual(defaults, {
+    sound: false,
+    wind: false,
+    rounds: 5,
+    sky: "night",
+  }));
+test("ten deterministic varied terrain maps", () => {
+  assert.equal(
+    new Set(Array.from({ length: 10 }, (_, i) => JSON.stringify(terrain(i))))
+      .size,
+    10,
+  );
+  assert.deepEqual(terrain(3), terrain(3));
+});
+test("movement bounded and no overlapping tanks", () => {
+  let m = game();
+  move(m, -900);
+  assert.equal(m.players[0].x, 35);
+  move(m, 825);
+  assert.equal(m.players[0].x, 35);
+});
+test("shot has gravity, no wind by default, double fire blocked", () => {
+  let m = game();
+  fire(m);
+  let vy = m.shot.vy,
+    vx = m.shot.vx;
+  assert.equal(fire(m), false);
+  step(m);
+  assert.ok(m.shot.vy > vy);
+  assert.equal(m.shot.vx, vx);
+});
+test("wind accelerates projectile", () => {
+  let m = createMatch(undefined, undefined, { wind: true });
+  startRound(m, 0, 10);
+  fire(m);
+  let vx = m.shot.vx;
+  step(m);
+  assert.ok(m.shot.vx > vx);
+});
+test("hit scores points and crosses upgrade threshold", () => {
+  let m = game();
+  m.players[0].misses = 4;
+  impact(m, m.players[1].x, tankY(m, m.players[1]));
+  assert.equal(m.result.winner, 0);
+  assert.equal(m.players[0].score, 1596);
+  assert.equal(m.players[0].level, 1);
+  assert.equal(m.phase, "result");
+});
+test("self hit awards opponent", () => {
+  let m = game();
+  impact(m, m.players[0].x, tankY(m, m.players[0]));
+  assert.equal(m.result.winner, 1);
+});
+test("miss transfers turn and changes terrain", () => {
+  let m = game(),
+    old = m.land[500];
+  impact(m, 500, old);
+  assert.ok(m.land[500] > old);
+  assert.equal(m.turn, 1);
+  assert.equal(m.players[0].misses, 1);
+  assert.equal(m.phase, "handoff");
+});
+test("round reset preserves score and upgrades", () => {
+  let m = game();
+  award(m, 0);
+  startRound(m);
+  assert.equal(m.players[0].score, 1600);
+  assert.equal(m.players[0].level, 1);
+  assert.equal(m.round, 2);
+  assert.equal(m.turn, 1);
+});
+test("projectiles resolve and never hang", () => {
+  for (let a of [5, 45, 90, 135, 175]) {
+    let m = game();
+    m.players[0].angle = a;
+    fire(m);
+    for (let n = 0; n < 2500 && m.phase === "flight"; n++) step(m);
+    assert.notEqual(m.phase, "flight");
+  }
+});
+test("full five-round match accumulates wins and upgrades", () => {
+  let m = game();
+  for (let r = 0; r < 5; r++) {
+    m.turn = 0;
+    impact(m, m.players[1].x, tankY(m, m.players[1]));
+    assert.equal(m.result.winner, 0);
+    if (r < 4) startRound(m);
+  }
+  assert.equal(m.players[0].wins, 5);
+  assert.equal(m.players[0].score, 8000);
+  assert.equal(m.players[0].level, 5);
+});
+test("both tanks in blast awards non-shooter", () => {
+  let m = game();
+  m.players[1].x = m.players[0].x + 15;
+  impact(m, m.players[0].x, tankY(m, m.players[0]));
+  assert.equal(m.result.winner, 1);
+});
+test("score cannot go negative", () => {
+  let m = game();
+  m.players[0].misses = 1700;
+  award(m, 0);
+  assert.equal(m.result.points, 0);
+});

@@ -10,7 +10,7 @@ A mobile-first, local two-player artillery duel: angle, power, gravity, wind, cr
 - **Terrence Janas** — Graphics, Multimedia Design, Webmaster
 - **Yajur Parikh** — Physics, Intro
 
-Their surviving Scorched Everitt design document is the foundation of this recreation. Original inspiration: *Scorched Earth*, by Wendell Hicken. No Scorched Earth code or assets were copied. Legacy timer/delay routines were credited to **Edwin Daniels**; the random-number routine to the ECE291 Spring 2001 class. Those historical routines are acknowledged, not claimed as part of this JavaScript implementation.
+Their surviving Scorched Everitt design document is the foundation of this recreation. Original inspiration: _Scorched Earth_, by Wendell Hicken. No Scorched Earth code or assets were copied. Legacy timer/delay routines were credited to **Edwin Daniels**; the random-number routine to the ECE291 Spring 2001 class. Those historical routines are acknowledged, not claimed as part of this JavaScript implementation.
 
 Modern recreation built with OpenClaw for Eric Argyle. Original team credits appear prominently in the main menu and full Credits screen.
 
@@ -18,9 +18,10 @@ Modern recreation built with OpenClaw for Eric Argyle. Original team credits app
 
 The PDF is the only surviving source supplied. It includes assembly-like control-flow pseudocode and function contracts, not a complete compilable source tree or original artwork. This is an independently implemented **specification-based recreation**, not an emulation, exact visual restoration, or verified port of the original binary. The source PDF is not redistributed.
 
-The original menu flow, player setup, option defaults, projectile collision, round scoring and upgrade concepts are preserved. Ten procedurally generated terrain profiles replace missing land.png. Original procedural vector artwork and Web Audio synthesis replace missing graphics/audio. The optional intro uses a short newly synthesized public-domain *Battle Hymn of the Republic* motif.
+The original menu flow, player setup, option defaults, projectile collision, round scoring and upgrade concepts are preserved. Ten procedurally generated terrain profiles replace missing land.png. Original procedural vector artwork and Web Audio synthesis replace missing graphics/audio. The optional intro uses a short newly synthesized public-domain _Battle Hymn of the Republic_ motif.
 
 Explicit resolutions of underspecified behavior:
+
 - Two humans alternate shots on one device; there is no AI or online networking. Networking was an optional historical aspiration, not implemented in the supplied specification.
 - Score is **max(0, 1600 − the winning player's failed shots in that round)**, following the prose “failed attempts” rather than counting the successful turn. Self-hit awards the other player; simultaneous destruction awards the non-shooter.
 - Upgrade whenever cumulative score crosses a multiple of 1500 (not only exact equality). Blast radius = 30 + 7 × level world units.

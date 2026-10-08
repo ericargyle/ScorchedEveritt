@@ -1,2 +1,70 @@
-import {chromium} from '@playwright/test';import assert from 'node:assert/strict';
-const browser=await chromium.launch();const page=await browser.newPage({viewport:{width:390,height:844},isMobile:true,hasTouch:true});let errors=[];page.on('pageerror',e=>errors.push(e.message));await page.goto(process.env.TEST_URL||'http://127.0.0.1:4173');await page.getByRole('button',{name:'Credits',exact:true}).click();await page.getByRole('heading',{name:'The original team'}).waitFor();assert.match(await page.locator('#dialog').innerText(),/Game Engine, Physics/);await page.getByRole('button',{name:'Back to base'}).click();await page.getByRole('button',{name:'Options',exact:true}).click();await page.locator('#optRounds').selectOption('1');await page.locator('#optWind').check();await page.getByRole('button',{name:'Save options'}).click();await page.reload();await page.getByRole('button',{name:'Options',exact:true}).click();assert.equal(await page.locator('#optRounds').inputValue(),'1');assert.equal(await page.locator('#optWind').isChecked(),true);await page.getByRole('button',{name:'Save options'}).click();await page.screenshot({path:'/tmp/scorched-home-mobile.png',fullPage:true});await page.getByRole('button',{name:'Start a duel'}).click();await page.locator('#name').fill('Orange');await page.locator('#next').click();await page.locator('#name').fill('Teal');await page.locator('#next').click();await page.locator('#game').waitFor({state:'visible'});await page.getByRole('button',{name:'Move right',exact:true}).click();await page.locator('#angle').fill('45');await page.locator('#power').fill('58');await page.screenshot({path:'/tmp/scorched-game-mobile.png',fullPage:true});await page.getByRole('button',{name:'Fire shot'}).click();await page.locator('#dialog[open]').waitFor({timeout:20000});assert.match(await page.locator('#dialog').innerText(),/your shot|wins/);if(await page.locator('#ready').count())await page.locator('#ready').click();await page.getByRole('button',{name:'Pause / menu'}).click();await page.getByRole('button',{name:'Resume',exact:true}).click();assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);await page.setViewportSize({width:844,height:390});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);await page.setViewportSize({width:1280,height:900});await page.screenshot({path:'/tmp/scorched-game-desktop.png',fullPage:true});assert.deepEqual(errors,[]);console.log('PASS: mobile setup, credits, options persistence, movement, firing, handoff, pause, portrait/landscape/desktop layout; no page errors');await browser.close();
+import { chromium } from "@playwright/test";
+import assert from "node:assert/strict";
+const browser = await chromium.launch();
+const page = await browser.newPage({
+  viewport: { width: 390, height: 844 },
+  isMobile: true,
+  hasTouch: true,
+});
+let errors = [];
+page.on("pageerror", (e) => errors.push(e.message));
+await page.goto(process.env.TEST_URL || "http://127.0.0.1:4173");
+await page.getByRole("button", { name: "Credits", exact: true }).click();
+await page.getByRole("heading", { name: "The original team" }).waitFor();
+assert.match(await page.locator("#dialog").innerText(), /Game Engine, Physics/);
+await page.getByRole("button", { name: "Back to base" }).click();
+await page.getByRole("button", { name: "Options", exact: true }).click();
+await page.locator("#optRounds").selectOption("1");
+await page.locator("#optWind").check();
+await page.getByRole("button", { name: "Save options" }).click();
+await page.reload();
+await page.getByRole("button", { name: "Options", exact: true }).click();
+assert.equal(await page.locator("#optRounds").inputValue(), "1");
+assert.equal(await page.locator("#optWind").isChecked(), true);
+await page.getByRole("button", { name: "Save options" }).click();
+await page.screenshot({
+  path: "/tmp/scorched-home-mobile.png",
+  fullPage: true,
+});
+await page.getByRole("button", { name: "Start a duel" }).click();
+await page.locator("#name").fill("Orange");
+await page.locator("#next").click();
+await page.locator("#name").fill("Teal");
+await page.locator("#next").click();
+await page.locator("#game").waitFor({ state: "visible" });
+await page.getByRole("button", { name: "Move right", exact: true }).click();
+await page.locator("#angle").fill("45");
+await page.locator("#power").fill("58");
+await page.screenshot({
+  path: "/tmp/scorched-game-mobile.png",
+  fullPage: true,
+});
+await page.getByRole("button", { name: "Fire shot" }).click();
+await page.locator("#dialog[open]").waitFor({ timeout: 20000 });
+assert.match(await page.locator("#dialog").innerText(), /your shot|wins/);
+if (await page.locator("#ready").count()) await page.locator("#ready").click();
+else {
+  await page.locator("#continue").click();
+  await page.locator("#again").click();
+}
+await page.getByRole("button", { name: "Pause / menu" }).click();
+await page.getByRole("button", { name: "Resume", exact: true }).click();
+assert.equal(
+  await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
+  true,
+);
+await page.setViewportSize({ width: 844, height: 390 });
+assert.equal(
+  await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
+  true,
+);
+await page.setViewportSize({ width: 1280, height: 900 });
+await page.screenshot({
+  path: "/tmp/scorched-game-desktop.png",
+  fullPage: true,
+});
+assert.deepEqual(errors, []);
+console.log(
+  "PASS: mobile setup, credits, options persistence, movement, firing, handoff, pause, portrait/landscape/desktop layout; no page errors",
+);
+await browser.close();
