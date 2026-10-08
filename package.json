@@ -1,6 +1,6 @@
 {
   "name": "scorched-everitt",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Modern recreation of the UIUC ECE291 artillery game",
   "type": "module",
   "main": "desktop/main.cjs",
