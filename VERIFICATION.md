@@ -6,6 +6,8 @@
 - Playwright Chromium mobile-emulation smoke test passed against the actual GitHub Pages URL: credits, names/chassis setup, options persistence, movement, shot, result/handoff, pause/resume, no JS page errors. No horizontal overflow at 390×844, 844×390 and 1280×900.
 - Mobile and desktop screenshots visually inspected. Touch-sized controls, names/scoreboard and battlefield visible.
 - GitHub Pages HTTPS endpoint returned HTTP 200.
+- Electron local-file desktop wrapper launched successfully on macOS through Playwright, loaded the production build, and started a two-player match offline. This validates the shared desktop entry point, not Windows-native execution.
+- Sound toggle and synthesized intro exercised in Chromium with no JavaScript errors.
 - Windows x64 portable executable built by Windows GitHub Actions. Release and checksum are the authoritative binary artifacts; no native Windows interactive gameplay testing performed on the Mac development host.
 
 Reproduce browser smoke test with a local dev server running: npm run test:browser. Or set TEST_URL=https://ericargyle.github.io/ScorchedEveritt/ . Install the test browser first with npx playwright install chromium. Automated touch emulation does not replace physical iOS/Android device testing.
